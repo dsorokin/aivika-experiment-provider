@@ -15,7 +15,7 @@ maintainer:      David Sorokin <david.sorokin@gmail.com>
 homepage:        http://www.aivikasoft.com/en/products/aivikasim.html
 cabal-version:   >= 1.6
 build-type:      Simple
-tested-with:     GHC == 7.10.1
+tested-with:     GHC == 8.0.2
 
 library
 
