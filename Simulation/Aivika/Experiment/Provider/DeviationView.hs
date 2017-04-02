@@ -30,8 +30,10 @@ import Simulation.Aivika.Experiment.Provider.Types
 -- | Defines the 'View' that provides with the deviation data
 -- in time points.
 data DeviationView =
-  DeviationView { deviationSourceId :: SourceUUID,
-                  -- ^ The source identifier.
+  DeviationView { deviationKey :: SourceKey,
+                  -- ^ The source key.
+                  deviationTitle :: String,
+                  -- ^ The title.
                   deviationPredicate :: Event Bool,
                   -- ^ It specifies the predicate that filters data.
                   deviationTransform :: ResultTransform,
@@ -43,7 +45,8 @@ data DeviationView =
 -- | The default Deviation view.  
 defaultDeviationView :: DeviationView
 defaultDeviationView = 
-  DeviationView { deviationSourceId  = error "Provide with the deviationSourceId field value",
+  DeviationView { deviationKey       = error "Provide with the deviationKey field value",
+                  deviationTitle     = "Deviation",
                   deviationPredicate = return True,
                   deviationTransform = id,
                   deviationSeries    = id }
@@ -52,7 +55,7 @@ instance ExperimentView DeviationView ExperimentProvider where
 
   outputView v = 
     let reporter exp provider env =
-          let ctx = makeExperimentProviderContext env (deviationSourceId v) 
+          let ctx = makeExperimentProviderContext env
           in return ExperimentReporter { reporterInitialise = return (),
                                          reporterFinalise   = return (),
                                          reporterSimulate   = simulateView v ctx,
@@ -72,6 +75,8 @@ simulateView view ctx expdata =
          signals = experimentPredefinedSignals expdata
          signal  = pureResultSignal signals $
                    resultSignal rs
+         srcKey    = deviationKey view
+         title     = deviationTitle view
          predicate = deviationPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
@@ -79,7 +84,6 @@ simulateView view ctx expdata =
          agent      = experimentAggregatorAgent aggregator
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
-         sourceId   = contextSourceId ctx
          loc        = experimentLocalisation exp
          getData ext =
            do n <- liftDynamics integIteration
@@ -96,7 +100,9 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          vars <- liftIO $ readOrCreateVarEntities agent expId ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          let vars  = sourceVarEntities srcEntity
+              srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->
             do (ts, xs) <- readSignalHistory h
                item <- forM (zip (elems ts) (elems xs)) $ \(t, (n, a)) ->
@@ -108,7 +114,7 @@ simulateView view ctx expdata =
                                          dataExperimentId = expId,
                                          dataRunIndex = i,
                                          dataVarId = varId var,
-                                         dataSourceId = sourceId,
+                                         dataSourceId = srcId,
                                          dataItem = item }
                liftIO $
                  aggregateInDeviationEntity aggregator entity

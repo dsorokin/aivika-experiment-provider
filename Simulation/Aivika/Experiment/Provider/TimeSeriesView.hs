@@ -30,20 +30,23 @@ import Simulation.Aivika.Experiment.Provider.Types
 -- | Defines the 'View' that provides with the simulation results
 -- in time points.
 data TimeSeriesView =
-  TimeSeriesView { timeSeriesSourceId :: SourceUUID,
-                   -- ^ The source identifier.
+  TimeSeriesView { timeSeriesKey :: SourceKey,
+                   -- ^ The source key.
+                   timeSeriesTitle :: String,
+                   -- ^ The title.
                    timeSeriesPredicate :: Event Bool,
                    -- ^ It specifies the predicate that filters data.
                    timeSeriesTransform :: ResultTransform,
                    -- ^ The transform applied to the results before receiving series.
-                   timeSeries :: ResultTransform 
+                   timeSeries :: ResultTransform
                    -- ^ It defines the series to provide with.
                  }
   
 -- | The default Time Series view.  
 defaultTimeSeriesView :: TimeSeriesView
 defaultTimeSeriesView = 
-  TimeSeriesView { timeSeriesSourceId  = error "Provide with the timeSeriesSourceId field value",
+  TimeSeriesView { timeSeriesKey       = error "Provide with the timeSeriesKey field value",
+                   timeSeriesTitle     = "Time Series",
                    timeSeriesPredicate = return True,
                    timeSeriesTransform = expandResults,
                    timeSeries          = id }
@@ -52,7 +55,7 @@ instance ExperimentView TimeSeriesView ExperimentProvider where
   
   outputView v = 
     let reporter exp provider env =
-          let ctx = makeExperimentProviderContext env (timeSeriesSourceId v) 
+          let ctx = makeExperimentProviderContext env
           in return ExperimentReporter { reporterInitialise = return (),
                                          reporterFinalise   = return (),
                                          reporterSimulate   = simulateView v ctx,
@@ -72,6 +75,8 @@ simulateView view ctx expdata =
          signals = experimentPredefinedSignals expdata
          signal  = pureResultSignal signals $
                    resultSignal rs
+         srcKey    = timeSeriesKey view
+         title     = timeSeriesTitle view
          predicate = timeSeriesPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
@@ -79,7 +84,6 @@ simulateView view ctx expdata =
          agent      = experimentAggregatorAgent aggregator
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
-         sourceId   = contextSourceId ctx
          loc        = experimentLocalisation exp
          getData ext =
            do n <- liftDynamics integIteration
@@ -94,10 +98,11 @@ simulateView view ctx expdata =
            resultValueSignal ext
      disposableComposite $
        DisposableEvent $
-       do t  <- liftDynamics time
-          ns <- forM exts $ \ext ->
+       do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          vars <- liftIO $ readOrCreateVarEntities agent expId ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          let vars  = sourceVarEntities srcEntity
+              srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->
             do (ts, xs) <- readSignalHistory h
                item <- forM (zip (elems ts) (elems xs)) $ \(t, (n, a)) ->
@@ -109,7 +114,7 @@ simulateView view ctx expdata =
                                          dataExperimentId = expId,
                                          dataRunIndex = i,
                                          dataVarId = varId var,
-                                         dataSourceId = sourceId,
+                                         dataSourceId = srcId,
                                          dataItem = item }
                liftIO $
                  writeTimeSeriesEntity agent entity

@@ -30,8 +30,10 @@ import Simulation.Aivika.Experiment.Trans.Provider.Types
 -- | Defines the 'View' that provides with the deviation data
 -- in final time points.
 data FinalDeviationView m =
-  FinalDeviationView { finalDeviationSourceId :: SourceUUID,
-                       -- ^ The source identifier.
+  FinalDeviationView { finalDeviationKey :: String,
+                       -- ^ The source key.
+                       finalDeviationTitle :: String,
+                       -- ^ The title.
                        finalDeviationTransform :: ResultTransform m,
                        -- ^ The transform applied to the results before receiving series.
                        finalDeviationSeries :: ResultTransform m
@@ -42,7 +44,8 @@ data FinalDeviationView m =
 defaultFinalDeviationView :: MonadDES m => FinalDeviationView m
 {-# INLINABLE defaultFinalDeviationView #-}
 defaultFinalDeviationView = 
-  FinalDeviationView { finalDeviationSourceId  = error "Provide with the finalDeviationSourceId field value",
+  FinalDeviationView { finalDeviationKey       = error "Provide with the finalDeviationKey field value",
+                       finalDeviationTitle     = "Final Deviation",
                        finalDeviationTransform = id,
                        finalDeviationSeries    = id }
   
@@ -51,7 +54,7 @@ instance ExperimentProviding ExperimentProvider m => ExperimentView (FinalDeviat
   {-# INLINABLE outputView #-}
   outputView v = 
     let reporter exp provider env =
-          let ctx = makeExperimentProviderContext env (finalDeviationSourceId v) 
+          let ctx = makeExperimentProviderContext env
           in return ExperimentReporter { reporterInitialise = return (),
                                          reporterFinalise   = return (),
                                          reporterSimulate   = simulateView v ctx,
@@ -72,20 +75,23 @@ simulateView view ctx expdata =
          exts    = resultsToDoubleStatsValues rs
          signals = experimentPredefinedSignals expdata
          signal  = resultSignalInStopTime signals
+         srcKey  = finalDeviationKey view
+         title   = finalDeviationTitle view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
          aggregator = providerExperimentAggregator provider
          agent      = experimentAggregatorAgent aggregator
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
-         sourceId   = contextSourceId ctx
          loc        = experimentLocalisation exp
      i  <- liftParameter simulationIndex
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          vars <- liftIO $ readOrCreateVarEntities agent expId ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          let vars  = sourceVarEntities srcEntity
+              srcId = sourceId srcEntity
           forM_ (zip vars exts) $ \(var, ext) ->
             do t <- liftDynamics time
                n <- liftDynamics integIteration
@@ -98,7 +104,7 @@ simulateView view ctx expdata =
                                          dataExperimentId = expId,
                                          dataRunIndex = i,
                                          dataVarId = varId var,
-                                         dataSourceId = sourceId,
+                                         dataSourceId = srcId,
                                          dataItem = item }
                liftIO $
                  aggregateInFinalDeviationEntity aggregator entity

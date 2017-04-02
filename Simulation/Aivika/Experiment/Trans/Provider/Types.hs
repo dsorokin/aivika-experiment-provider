@@ -17,8 +17,7 @@ module Simulation.Aivika.Experiment.Trans.Provider.Types
         ExperimentProviderEnvironment(..),
         ExperimentProviding,
         makeExperimentProviderContext,
-        contextExperimentEnvironment,
-        contextSourceId) where
+        contextExperimentEnvironment) where
 
 import Control.Monad
 import Control.Monad.Trans
@@ -48,10 +47,8 @@ instance ExperimentMonadProviding ExperimentProvider m => ExperimentRendering Ex
 
   -- | The experiment context.
   data ExperimentContext ExperimentProvider m =
-    ExperimentProviderContext { contextExperimentEnvironment :: ExperimentProviderEnvironment m,
+    ExperimentProviderContext { contextExperimentEnvironment :: ExperimentProviderEnvironment m
                                 -- ^ The experiment environment.
-                                contextSourceId :: SourceUUID
-                                -- ^ The source identifier.
                               }
 
   -- | The experiment environment.
@@ -64,7 +61,6 @@ instance ExperimentMonadProviding ExperimentProvider m => ExperimentRendering Ex
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentMonadProviding ExperimentProvider m
                                  => ExperimentProviderEnvironment m
-                                 -> SourceUUID
                                  -> ExperimentContext ExperimentProvider m
 {-# INLINABLE makeExperimentProviderContext #-}
 makeExperimentProviderContext = ExperimentProviderContext

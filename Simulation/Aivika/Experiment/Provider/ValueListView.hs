@@ -30,8 +30,10 @@ import Simulation.Aivika.Experiment.Provider.Types
 -- | Defines the 'View' that provides with the multiple simulation results
 -- in time points accumulated for all runs.
 data ValueListView =
-  ValueListView { valueListSourceId :: SourceUUID,
-                  -- ^ The source identifier.
+  ValueListView { valueListKey :: SourceKey,
+                  -- ^ The source key.
+                  valueListTitle :: String,
+                  -- ^ The title.
                   valueListPredicate :: Event Bool,
                   -- ^ It specifies the predicate that filters data.
                   valueListTransform :: ResultTransform,
@@ -43,7 +45,8 @@ data ValueListView =
 -- | The default Value List view.  
 defaultValueListView :: ValueListView
 defaultValueListView = 
-  ValueListView { valueListSourceId  = error "Provide with the valueListSourceId field value",
+  ValueListView { valueListKey       = error "Provide with the valueListKey field value",
+                  valueListTitle     = "Value List",
                   valueListPredicate = return True,
                   valueListTransform = expandResults,
                   valueListSeries    = id }
@@ -52,7 +55,7 @@ instance ExperimentView ValueListView ExperimentProvider where
 
   outputView v = 
     let reporter exp provider env =
-          let ctx = makeExperimentProviderContext env (valueListSourceId v) 
+          let ctx = makeExperimentProviderContext env
           in return ExperimentReporter { reporterInitialise = return (),
                                          reporterFinalise   = return (),
                                          reporterSimulate   = simulateView v ctx,
@@ -72,6 +75,8 @@ simulateView view ctx expdata =
          signals = experimentPredefinedSignals expdata
          signal  = pureResultSignal signals $
                    resultSignal rs
+         srcKey    = valueListKey view
+         title     = valueListTitle view
          predicate = valueListPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
@@ -79,7 +84,6 @@ simulateView view ctx expdata =
          agent      = experimentAggregatorAgent aggregator
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
-         sourceId   = contextSourceId ctx
          loc        = experimentLocalisation exp
          getData ext =
            do n <- liftDynamics integIteration
@@ -95,7 +99,9 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          vars <- liftIO $ readOrCreateVarEntities agent expId ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          let vars  = sourceVarEntities srcEntity
+              srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->
             do (ts, xs) <- readSignalHistory h
                item <- forM (zip (elems ts) (elems xs)) $ \(t, (n, a)) ->
@@ -106,7 +112,7 @@ simulateView view ctx expdata =
                let entity = MultipleDataEntity { multipleDataId = entityId,
                                                  multipleDataExperimentId = expId,
                                                  multipleDataVarId = varId var,
-                                                 multipleDataSourceId = sourceId,
+                                                 multipleDataSourceId = srcId,
                                                  multipleDataItem = item }
                liftIO $
                  writeValueListEntity agent entity

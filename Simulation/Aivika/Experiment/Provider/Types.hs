@@ -16,8 +16,7 @@ module Simulation.Aivika.Experiment.Provider.Types
        (ExperimentProvider(..),
         ExperimentProviderEnvironment(..),
         makeExperimentProviderContext,
-        contextExperimentEnvironment,
-        contextSourceId) where
+        contextExperimentEnvironment) where
 
 import Simulation.Aivika.Experiment
 import Simulation.Aivika.Experiment.Entity
@@ -43,10 +42,8 @@ instance ExperimentRendering ExperimentProvider where
 
   -- | The experiment context.
   data ExperimentContext ExperimentProvider =
-    ExperimentProviderContext { contextExperimentEnvironment :: ExperimentProviderEnvironment,
+    ExperimentProviderContext { contextExperimentEnvironment :: ExperimentProviderEnvironment
                                 -- ^ The experiment environment.
-                                contextSourceId :: SourceUUID
-                                -- ^ The source identifier.
                               }
 
   -- | The experiment environment.
@@ -62,5 +59,5 @@ instance ExperimentRendering ExperimentProvider where
   renderExperiment e r reporters env = undefined
 
 -- | Make the experiment context.
-makeExperimentProviderContext :: ExperimentProviderEnvironment -> SourceUUID -> ExperimentContext ExperimentProvider
+makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider
 makeExperimentProviderContext = ExperimentProviderContext

@@ -30,8 +30,10 @@ import Simulation.Aivika.Experiment.Trans.Provider.Types
 -- | Defines the 'View' that provides with the simulation results
 -- in final time points.
 data LastValueView m =
-  LastValueView { lastValueSourceId :: SourceUUID,
-                  -- ^ The source identifier.
+  LastValueView { lastValueKey :: SourceKey,
+                  -- ^ The source key.
+                  lastValueTitle :: String,
+                  -- ^ The title.
                   lastValueTransform :: ResultTransform m,
                   -- ^ The transform applied to the results before receiving series.
                   lastValueSeries :: ResultTransform m
@@ -42,7 +44,8 @@ data LastValueView m =
 defaultLastValueView :: MonadDES m => LastValueView m
 {-# INLINABLE defaultLastValueView #-}
 defaultLastValueView = 
-  LastValueView { lastValueSourceId  = error "Provide with the lastValueSourceId field value",
+  LastValueView { lastValueKey       = error "Provide with the lastValueKey field value",
+                  lastValueTitle     = "Last Value",
                   lastValueTransform = expandResults,
                   lastValueSeries    = id }
   
@@ -51,7 +54,7 @@ instance ExperimentProviding ExperimentProvider m => ExperimentView (LastValueVi
   {-# INLINABLE outputView #-}
   outputView v = 
     let reporter exp provider env =
-          let ctx = makeExperimentProviderContext env (lastValueSourceId v) 
+          let ctx = makeExperimentProviderContext env
           in return ExperimentReporter { reporterInitialise = return (),
                                          reporterFinalise   = return (),
                                          reporterSimulate   = simulateView v ctx,
@@ -72,20 +75,23 @@ simulateView view ctx expdata =
          exts    = resultsToDoubleValues rs
          signals = experimentPredefinedSignals expdata
          signal  = resultSignalInStopTime signals
+         srcKey  = lastValueKey view
+         title   = lastValueTitle view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
          aggregator = providerExperimentAggregator provider
          agent      = experimentAggregatorAgent aggregator
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
-         sourceId   = contextSourceId ctx
          loc        = experimentLocalisation exp
      i  <- liftParameter simulationIndex
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          vars <- liftIO $ readOrCreateVarEntities agent expId ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          let vars  = sourceVarEntities srcEntity
+              srcId = sourceId srcEntity
           entities <- forM (zip vars exts) $ \(var, ext) ->
             do t <- liftDynamics time
                n <- liftDynamics integIteration
@@ -98,7 +104,7 @@ simulateView view ctx expdata =
                                          dataExperimentId = expId,
                                          dataRunIndex = i,
                                          dataVarId = varId var,
-                                         dataSourceId = sourceId,
+                                         dataSourceId = srcId,
                                          dataItem = item }
                return entity
           liftIO $
