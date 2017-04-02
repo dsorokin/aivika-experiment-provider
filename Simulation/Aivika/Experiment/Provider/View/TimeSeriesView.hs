@@ -60,7 +60,10 @@ instance ExperimentView TimeSeriesView ExperimentProvider where
     in ExperimentGenerator { generateReporter = reporter }
        
 -- | Provide with the simulation results.
-simulateView :: TimeSeriesView -> ExperimentContext ExperimentProvider -> ExperimentData -> Composite ()
+simulateView :: TimeSeriesView
+                -> ExperimentContext ExperimentProvider
+                -> ExperimentData
+                -> Composite ()
 simulateView view ctx expdata =
   do let rs      = timeSeries view $
                    timeSeriesTransform view $
