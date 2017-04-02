@@ -45,7 +45,7 @@ defaultDeviationView :: DeviationView
 defaultDeviationView = 
   DeviationView { deviationSourceId  = error "Provide with the deviationSourceId field value",
                   deviationPredicate = return True,
-                  deviationTransform = expandResults,
+                  deviationTransform = id,
                   deviationSeries    = id }
   
 instance ExperimentView DeviationView ExperimentProvider where

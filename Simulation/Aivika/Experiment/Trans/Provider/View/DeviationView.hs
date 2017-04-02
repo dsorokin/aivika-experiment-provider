@@ -46,7 +46,7 @@ defaultDeviationView :: MonadDES m => DeviationView m
 defaultDeviationView = 
   DeviationView { deviationSourceId  = error "Provide with the deviationSourceId field value",
                   deviationPredicate = return True,
-                  deviationTransform = expandResults,
+                  deviationTransform = id,
                   deviationSeries    = id }
   
 instance ExperimentProviding ExperimentProvider m => ExperimentView (DeviationView m) ExperimentProvider m where
