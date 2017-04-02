@@ -98,24 +98,22 @@ simulateView view ctx expdata =
            resultValueSignal ext
      disposableComposite $
        DisposableEvent $
-       do t <- liftDynamics time
-          enqueueEventIO t $
-            do ns <- forM exts $ \ext ->
-                 return (resultValueName ext, loc $ resultValueId ext)
-               vars <- liftIO $ readOrCreateVarEntities agent expId ns
-               forM_ (zip vars hs) $ \(var, h) ->
-                 do (ts, xs) <- readSignalHistory h
-                    item <- forM (zip (elems ts) (elems xs)) $ \(t, (n, a)) ->
-                      return DataItem { dataItemValue = a,
-                                        dataItemIteration = n,
-                                        dataItemTime = t }
-                    entityId <- liftIO newRandomUUID
-                    let entity = DataEntity { dataId = entityId,
-                                              dataExperimentId = expId,
-                                              dataRunIndex = i,
-                                              dataVarId = varId var,
-                                              dataSourceId = sourceId,
-                                              dataItem = item }
-                    liftIO $
-                      writeTimeSeriesEntity agent entity
+       do ns <- forM exts $ \ext ->
+            return (resultValueName ext, loc $ resultValueId ext)
+          vars <- liftIO $ readOrCreateVarEntities agent expId ns
+          forM_ (zip vars hs) $ \(var, h) ->
+            do (ts, xs) <- readSignalHistory h
+               item <- forM (zip (elems ts) (elems xs)) $ \(t, (n, a)) ->
+                 return DataItem { dataItemValue = a,
+                                   dataItemIteration = n,
+                                   dataItemTime = t }
+               entityId <- liftIO newRandomUUID
+               let entity = DataEntity { dataId = entityId,
+                                         dataExperimentId = expId,
+                                         dataRunIndex = i,
+                                         dataVarId = varId var,
+                                         dataSourceId = sourceId,
+                                         dataItem = item }
+               liftIO $
+                 writeTimeSeriesEntity agent entity
                
