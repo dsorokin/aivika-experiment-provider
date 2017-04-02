@@ -15,10 +15,15 @@
 module Simulation.Aivika.Experiment.Trans.Provider.Types
        (ExperimentProvider(..),
         ExperimentProviderEnvironment(..),
+        ExperimentProviding,
         makeExperimentProviderContext,
         contextExperimentEnvironment,
         contextSourceId) where
 
+import Control.Monad
+import Control.Monad.Trans
+
+import Simulation.Aivika.Trans
 import Simulation.Aivika.Experiment.Entity
 import Simulation.Aivika.Trans.Experiment
 
@@ -63,3 +68,10 @@ makeExperimentProviderContext :: ExperimentMonadProviding ExperimentProvider m
                                  -> ExperimentContext ExperimentProvider m
 {-# INLINABLE makeExperimentProviderContext #-}
 makeExperimentProviderContext = ExperimentProviderContext
+
+-- | Defines the constraints when the experiment can be provided.
+class (MonadDES m,
+       MonadIO (Event m),
+       EventIOQueueing m,
+       ExperimentMonadProviding r m,
+       Monad (ExperimentMonad r m)) => ExperimentProviding r m

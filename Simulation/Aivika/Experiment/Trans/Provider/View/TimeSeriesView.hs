@@ -49,12 +49,7 @@ defaultTimeSeriesView =
                    timeSeriesTransform = expandResults,
                    timeSeries          = id }
   
-instance (MonadDES m,
-          MonadIO (Event m),
-          EventIOQueueing m,
-          ExperimentMonadProviding ExperimentProvider m,
-          Monad (ExperimentMonad ExperimentProvider m))
-         => ExperimentView (TimeSeriesView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView (TimeSeriesView m) ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 
@@ -67,10 +62,7 @@ instance (MonadDES m,
     in ExperimentGenerator { generateReporter = reporter }
        
 -- | Provide with the simulation results.
-simulateView :: (MonadDES m,
-                 MonadIO (Event m),
-                 EventIOQueueing m,
-                 ExperimentMonadProviding ExperimentProvider m)
+simulateView :: ExperimentProviding ExperimentProvider m
                 => TimeSeriesView m
                 -> ExperimentContext ExperimentProvider m
                 -> ExperimentData m
