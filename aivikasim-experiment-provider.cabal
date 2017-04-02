@@ -24,6 +24,7 @@ library
                      Simulation.Aivika.Experiment.Provider.View.TimeSeriesView
                      Simulation.Aivika.Experiment.Trans.Provider
                      Simulation.Aivika.Experiment.Trans.Provider.Types
+                     Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView
 
     build-depends:   base >= 3 && < 6,
                      mtl >= 1.1.0.2,
