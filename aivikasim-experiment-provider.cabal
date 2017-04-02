@@ -25,12 +25,14 @@ library
                      Simulation.Aivika.Experiment.Provider.FinalDeviationView
                      Simulation.Aivika.Experiment.Provider.LastValueView
                      Simulation.Aivika.Experiment.Provider.TimeSeriesView
+                     Simulation.Aivika.Experiment.Provider.ValueListView
                      Simulation.Aivika.Experiment.Trans.Provider
                      Simulation.Aivika.Experiment.Trans.Provider.Types
                      Simulation.Aivika.Experiment.Trans.Provider.DeviationView
                      Simulation.Aivika.Experiment.Trans.Provider.FinalDeviationView
                      Simulation.Aivika.Experiment.Trans.Provider.LastValueView
                      Simulation.Aivika.Experiment.Trans.Provider.TimeSeriesView
+                     Simulation.Aivika.Experiment.Trans.Provider.ValueListView
 
     build-depends:   base >= 3 && < 6,
                      mtl >= 1.1.0.2,
