@@ -34,6 +34,8 @@ data FinalDeviationView m =
                        -- ^ The source key.
                        finalDeviationTitle :: String,
                        -- ^ The title.
+                       finalDeviationDescription :: String,
+                       -- ^ The description.
                        finalDeviationTransform :: ResultTransform m,
                        -- ^ The transform applied to the results before receiving series.
                        finalDeviationSeries :: ResultTransform m
@@ -46,6 +48,7 @@ defaultFinalDeviationView :: MonadDES m => FinalDeviationView m
 defaultFinalDeviationView = 
   FinalDeviationView { finalDeviationKey       = error "Provide with the finalDeviationKey field value",
                        finalDeviationTitle     = "Final Deviation",
+                       finalDeviationDescription = "",
                        finalDeviationTransform = id,
                        finalDeviationSeries    = id }
   
@@ -77,6 +80,7 @@ simulateView view ctx expdata =
          signal  = resultSignalInStopTime signals
          srcKey  = finalDeviationKey view
          title   = finalDeviationTitle view
+         descr   = finalDeviationDescription view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
          aggregator = providerExperimentAggregator provider
@@ -89,7 +93,7 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title descr ns
           let vars  = sourceVarEntities srcEntity
               srcId = sourceId srcEntity
           forM_ (zip vars exts) $ \(var, ext) ->

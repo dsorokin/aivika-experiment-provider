@@ -34,6 +34,8 @@ data DeviationView =
                   -- ^ The source key.
                   deviationTitle :: String,
                   -- ^ The title.
+                  deviationDescription :: String,
+                  -- ^ The description.
                   deviationPredicate :: Event Bool,
                   -- ^ It specifies the predicate that filters data.
                   deviationTransform :: ResultTransform,
@@ -47,6 +49,7 @@ defaultDeviationView :: DeviationView
 defaultDeviationView = 
   DeviationView { deviationKey       = error "Provide with the deviationKey field value",
                   deviationTitle     = "Deviation",
+                  deviationDescription = "",
                   deviationPredicate = return True,
                   deviationTransform = id,
                   deviationSeries    = id }
@@ -77,6 +80,7 @@ simulateView view ctx expdata =
                    resultSignal rs
          srcKey    = deviationKey view
          title     = deviationTitle view
+         descr     = deviationDescription view
          predicate = deviationPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
@@ -100,7 +104,7 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title descr ns
           let vars  = sourceVarEntities srcEntity
               srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->

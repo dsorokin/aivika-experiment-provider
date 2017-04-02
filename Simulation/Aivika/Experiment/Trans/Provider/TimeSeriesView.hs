@@ -34,6 +34,8 @@ data TimeSeriesView m =
                    -- ^ The source key.
                    timeSeriesTitle :: String,
                    -- ^ The title.
+                   timeSeriesDescription :: String,
+                   -- ^ The description.
                    timeSeriesPredicate :: Event m Bool,
                    -- ^ It specifies the predicate that filters data.
                    timeSeriesTransform :: ResultTransform m,
@@ -48,6 +50,7 @@ defaultTimeSeriesView :: MonadDES m => TimeSeriesView m
 defaultTimeSeriesView = 
   TimeSeriesView { timeSeriesKey       = error "Provide with the timeSeriesKey field value",
                    timeSeriesTitle     = "Time Series",
+                   timeSeriesDescription = "",
                    timeSeriesPredicate = return True,
                    timeSeriesTransform = expandResults,
                    timeSeries          = id }
@@ -81,6 +84,7 @@ simulateView view ctx expdata =
                    resultSignal rs
          srcKey    = timeSeriesKey view
          title     = timeSeriesTitle view
+         descr     = timeSeriesDescription view
          predicate = timeSeriesPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
@@ -104,7 +108,7 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title descr ns
           let vars  = sourceVarEntities srcEntity
               srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->

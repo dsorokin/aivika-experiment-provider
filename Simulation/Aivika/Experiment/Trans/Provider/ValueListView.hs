@@ -34,6 +34,8 @@ data ValueListView m =
                   -- ^ The source key.
                   valueListTitle :: String,
                   -- ^ The title.
+                  valueListDescription :: String,
+                  -- ^ The description.
                   valueListPredicate :: Event m Bool,
                   -- ^ It specifies the predicate that filters data.
                   valueListTransform :: ResultTransform m,
@@ -48,6 +50,7 @@ defaultValueListView :: MonadDES m => ValueListView m
 defaultValueListView = 
   ValueListView { valueListKey       = error "Provide with the valueListKey field value",
                   valueListTitle     = "Value List",
+                  valueListDescription = "",
                   valueListPredicate = return True,
                   valueListTransform = expandResults,
                   valueListSeries    = id }
@@ -81,6 +84,7 @@ simulateView view ctx expdata =
                    resultSignal rs
          srcKey    = valueListKey view
          title     = valueListTitle view
+         descr     = valueListDescription view
          predicate = valueListPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
@@ -103,7 +107,7 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title descr ns
           let vars  = sourceVarEntities srcEntity
               srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->

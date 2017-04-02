@@ -34,6 +34,8 @@ data LastValueView =
                   -- ^ The source key.
                   lastValueTitle :: String,
                   -- ^ The title.
+                  lastValueDescription :: String,
+                  -- ^ The description.
                   lastValueTransform :: ResultTransform,
                   -- ^ The transform applied to the results before receiving series.
                   lastValueSeries :: ResultTransform
@@ -45,6 +47,7 @@ defaultLastValueView :: LastValueView
 defaultLastValueView = 
   LastValueView { lastValueKey       = error "Provide with the lastValueKey field value",
                   lastValueTitle     = "Last Value",
+                  lastValueDescription = "",
                   lastValueTransform = expandResults,
                   lastValueSeries    = id }
   
@@ -73,6 +76,7 @@ simulateView view ctx expdata =
          signal  = resultSignalInStopTime signals
          srcKey  = lastValueKey view
          title   = lastValueTitle view
+         descr   = lastValueDescription view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
          aggregator = providerExperimentAggregator provider
@@ -85,7 +89,7 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title ns
+          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title descr ns
           let vars  = sourceVarEntities srcEntity
               srcId = sourceId srcEntity
           entities <- forM (zip vars exts) $ \(var, ext) ->
