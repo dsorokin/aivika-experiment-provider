@@ -14,10 +14,12 @@ module Simulation.Aivika.Experiment.Provider
        (-- * Modules
         module Simulation.Aivika.Experiment.Provider.Types,
         module Simulation.Aivika.Experiment.Provider.DeviationView,
+        module Simulation.Aivika.Experiment.Provider.FinalDeviationView,
         module Simulation.Aivika.Experiment.Provider.LastValueView,
         module Simulation.Aivika.Experiment.Provider.TimeSeriesView) where
 
 import Simulation.Aivika.Experiment.Provider.Types
 import Simulation.Aivika.Experiment.Provider.DeviationView
+import Simulation.Aivika.Experiment.Provider.FinalDeviationView
 import Simulation.Aivika.Experiment.Provider.LastValueView
 import Simulation.Aivika.Experiment.Provider.TimeSeriesView
