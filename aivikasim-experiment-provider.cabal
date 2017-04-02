@@ -21,12 +21,14 @@ library
 
     exposed-modules: Simulation.Aivika.Experiment.Provider
                      Simulation.Aivika.Experiment.Provider.Types
-                     Simulation.Aivika.Experiment.Provider.View.DeviationView
-                     Simulation.Aivika.Experiment.Provider.View.TimeSeriesView
+                     Simulation.Aivika.Experiment.Provider.DeviationView
+                     Simulation.Aivika.Experiment.Provider.LastValueView
+                     Simulation.Aivika.Experiment.Provider.TimeSeriesView
                      Simulation.Aivika.Experiment.Trans.Provider
                      Simulation.Aivika.Experiment.Trans.Provider.Types
-                     Simulation.Aivika.Experiment.Trans.Provider.View.DeviationView
-                     Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView
+                     Simulation.Aivika.Experiment.Trans.Provider.DeviationView
+                     Simulation.Aivika.Experiment.Trans.Provider.LastValueView
+                     Simulation.Aivika.Experiment.Trans.Provider.TimeSeriesView
 
     build-depends:   base >= 3 && < 6,
                      mtl >= 1.1.0.2,

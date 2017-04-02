@@ -1,8 +1,8 @@
 
-{-# LANGUAGE MultiParamTypeClasses, FlexibleInstances, FlexibleContexts #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 -- |
--- Module     : Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView
+-- Module     : Simulation.Aivika.Experiment.Provider.TimeSeriesView
 -- Copyright  : Copyright (c) 2017, David Sorokin <david.sorokin@gmail.com>
 -- License    : AllRightsReserved
 -- Maintainer : David Sorokin <david.sorokin@gmail.com>
@@ -13,7 +13,7 @@
 -- the simulation results in time points.
 --
 
-module Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView 
+module Simulation.Aivika.Experiment.Provider.TimeSeriesView 
        (TimeSeriesView(..), 
         defaultTimeSeriesView) where
 
@@ -22,36 +22,34 @@ import Control.Monad.Trans
 
 import Data.Array
 
-import Simulation.Aivika.Trans
-import Simulation.Aivika.Trans.Experiment
+import Simulation.Aivika
+import Simulation.Aivika.Experiment
 import Simulation.Aivika.Experiment.Entity
-import Simulation.Aivika.Experiment.Trans.Provider.Types
+import Simulation.Aivika.Experiment.Provider.Types
 
 -- | Defines the 'View' that provides with the simulation results
 -- in time points.
-data TimeSeriesView m =
+data TimeSeriesView =
   TimeSeriesView { timeSeriesSourceId :: SourceUUID,
                    -- ^ The source identifier.
-                   timeSeriesPredicate :: Event m Bool,
+                   timeSeriesPredicate :: Event Bool,
                    -- ^ It specifies the predicate that filters data.
-                   timeSeriesTransform :: ResultTransform m,
+                   timeSeriesTransform :: ResultTransform,
                    -- ^ The transform applied to the results before receiving series.
-                   timeSeries :: ResultTransform m
+                   timeSeries :: ResultTransform 
                    -- ^ It defines the series to provide with.
                  }
   
 -- | The default Time Series view.  
-defaultTimeSeriesView :: MonadDES m => TimeSeriesView m
-{-# INLINABLE defaultTimeSeriesView #-}
+defaultTimeSeriesView :: TimeSeriesView
 defaultTimeSeriesView = 
   TimeSeriesView { timeSeriesSourceId  = error "Provide with the timeSeriesSourceId field value",
                    timeSeriesPredicate = return True,
                    timeSeriesTransform = expandResults,
                    timeSeries          = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (TimeSeriesView m) ExperimentProvider m where
-
-  {-# INLINABLE outputView #-}
+instance ExperimentView TimeSeriesView ExperimentProvider where
+  
   outputView v = 
     let reporter exp provider env =
           let ctx = makeExperimentProviderContext env (timeSeriesSourceId v) 
@@ -62,12 +60,10 @@ instance ExperimentProviding ExperimentProvider m => ExperimentView (TimeSeriesV
     in ExperimentGenerator { generateReporter = reporter }
        
 -- | Provide with the simulation results.
-simulateView :: ExperimentProviding ExperimentProvider m
-                => TimeSeriesView m
-                -> ExperimentContext ExperimentProvider m
-                -> ExperimentData m
-                -> Composite m ()
-{-# INLINABLE simulateView #-}
+simulateView :: TimeSeriesView
+                -> ExperimentContext ExperimentProvider
+                -> ExperimentData
+                -> Composite ()
 simulateView view ctx expdata =
   do let rs      = timeSeries view $
                    timeSeriesTransform view $
@@ -98,7 +94,8 @@ simulateView view ctx expdata =
            resultValueSignal ext
      disposableComposite $
        DisposableEvent $
-       do ns <- forM exts $ \ext ->
+       do t  <- liftDynamics time
+          ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
           vars <- liftIO $ readOrCreateVarEntities agent expId ns
           forM_ (zip vars hs) $ \(var, h) ->

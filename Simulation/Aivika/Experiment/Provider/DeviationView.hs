@@ -2,7 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 
 -- |
--- Module     : Simulation.Aivika.Experiment.Provider.View.DeviationView
+-- Module     : Simulation.Aivika.Experiment.Provider.DeviationView
 -- Copyright  : Copyright (c) 2017, David Sorokin <david.sorokin@gmail.com>
 -- License    : AllRightsReserved
 -- Maintainer : David Sorokin <david.sorokin@gmail.com>
@@ -13,7 +13,7 @@
 -- the deviation data in time points.
 --
 
-module Simulation.Aivika.Experiment.Provider.View.DeviationView 
+module Simulation.Aivika.Experiment.Provider.DeviationView 
        (DeviationView(..), 
         defaultDeviationView) where
 
