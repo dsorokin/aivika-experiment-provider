@@ -21,9 +21,11 @@ library
 
     exposed-modules: Simulation.Aivika.Experiment.Provider
                      Simulation.Aivika.Experiment.Provider.Types
+                     Simulation.Aivika.Experiment.Provider.View.DeviationView
                      Simulation.Aivika.Experiment.Provider.View.TimeSeriesView
                      Simulation.Aivika.Experiment.Trans.Provider
                      Simulation.Aivika.Experiment.Trans.Provider.Types
+                     Simulation.Aivika.Experiment.Trans.Provider.View.DeviationView
                      Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView
 
     build-depends:   base >= 3 && < 6,

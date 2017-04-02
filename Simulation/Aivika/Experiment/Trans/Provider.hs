@@ -13,7 +13,9 @@
 module Simulation.Aivika.Experiment.Trans.Provider
        (-- * Modules
         module Simulation.Aivika.Experiment.Trans.Provider.Types,
+        module Simulation.Aivika.Experiment.Trans.Provider.View.DeviationView
         module Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView) where
 
 import Simulation.Aivika.Experiment.Trans.Provider.Types
+import Simulation.Aivika.Experiment.Trans.Provider.View.DeviationView
 import Simulation.Aivika.Experiment.Trans.Provider.View.TimeSeriesView
