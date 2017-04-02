@@ -30,7 +30,7 @@ import Simulation.Aivika.Experiment.Provider.Types
 -- | Defines the 'View' that provides with the simulation results
 -- in time points.
 data TimeSeriesView =
-  TimeSeriesView { timeSeriesSourceId :: String,
+  TimeSeriesView { timeSeriesSourceId :: SourceUUID,
                    -- ^ The source identifier.
                    timeSeriesPredicate :: Event Bool,
                    -- ^ It specifies the predicate that filters data.
