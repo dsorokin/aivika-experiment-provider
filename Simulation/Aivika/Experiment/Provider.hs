@@ -12,8 +12,8 @@
 
 module Simulation.Aivika.Experiment.Provider
        (-- * Modules
-        module Simulation.Aivika.Experiment.Provider.ExperimentAgent,
-        module Simulation.Aivika.Experiment.Provider.ExperimentAggregator) where
+        module Simulation.Aivika.Experiment.Provider.Types,
+        module Simulation.Aivika.Experiment.Provider.View.TimeSeriesView) where
 
-import Simulation.Aivika.Experiment.Provider.ExperimentAgent
-import Simulation.Aivika.Experiment.Provider.ExperimentAggregator
+import Simulation.Aivika.Experiment.Provider.Types
+import Simulation.Aivika.Experiment.Provider.View.TimeSeriesView
