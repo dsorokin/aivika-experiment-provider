@@ -107,7 +107,7 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntity agent expId srcKey title descr ns
+          srcEntity <- liftIO $ readOrCreateSourceEntityByKey agent expId srcKey title descr ns
           let vars  = sourceVarEntities srcEntity
               srcId = sourceId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->
