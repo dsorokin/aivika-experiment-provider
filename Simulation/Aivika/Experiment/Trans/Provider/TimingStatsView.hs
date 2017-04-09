@@ -55,7 +55,7 @@ defaultTimingStatsView =
                     timingStatsTransform = id,
                     timingStatsSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (TimingStatsView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView TimingStatsView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

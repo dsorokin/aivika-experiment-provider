@@ -22,6 +22,7 @@ module Simulation.Aivika.Experiment.Trans.Provider
         module Simulation.Aivika.Experiment.Trans.Provider.LastValueView,
         module Simulation.Aivika.Experiment.Trans.Provider.SamplingStatsView,
         module Simulation.Aivika.Experiment.Trans.Provider.TimeSeriesView,
+        module Simulation.Aivika.Experiment.Trans.Provider.TimingStatsView,
         module Simulation.Aivika.Experiment.Trans.Provider.ValueListView) where
 
 import Simulation.Aivika.Experiment.Trans.Provider.Types
@@ -34,4 +35,5 @@ import Simulation.Aivika.Experiment.Trans.Provider.LastValueListView
 import Simulation.Aivika.Experiment.Trans.Provider.LastValueView
 import Simulation.Aivika.Experiment.Trans.Provider.SamplingStatsView
 import Simulation.Aivika.Experiment.Trans.Provider.TimeSeriesView
+import Simulation.Aivika.Experiment.Trans.Provider.TimingStatsView
 import Simulation.Aivika.Experiment.Trans.Provider.ValueListView
