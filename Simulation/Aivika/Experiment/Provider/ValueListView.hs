@@ -10,7 +10,7 @@
 -- Tested with: GHC 8.0.2
 --
 -- The module defines 'ValueListView' that provides with
--- the multiple simulation results in time points accumulated for all runs.
+-- multiple simulation results in time points.
 --
 
 module Simulation.Aivika.Experiment.Provider.ValueListView 
@@ -27,8 +27,7 @@ import Simulation.Aivika.Experiment
 import Simulation.Aivika.Experiment.Entity
 import Simulation.Aivika.Experiment.Provider.Types
 
--- | Defines the 'View' that provides with the multiple simulation results
--- in time points accumulated for all runs.
+-- | Defines the 'View' that provides multiple simulation results in time points.
 data ValueListView =
   ValueListView { valueListKey :: SourceKey,
                   -- ^ The source key.
@@ -93,6 +92,7 @@ simulateView view ctx expdata =
            do n <- liftDynamics integIteration
               a <- resultValueData ext
               return (n, a)
+     i <- liftParameter simulationIndex
      hs <- forM exts $ \ext ->
            newSignalHistory $
            mapSignalM (const $ getData ext) $
@@ -113,11 +113,12 @@ simulateView view ctx expdata =
                                    dataItemIteration = n,
                                    dataItemTime = t }
                entityId <- liftIO newRandomUUID
-               let entity = MultipleDataEntity { multipleDataEntityId = entityId,
-                                                 multipleDataEntityExperimentId = expId,
-                                                 multipleDataEntityVarId = varEntityId var,
-                                                 multipleDataEntitySourceId = srcId,
-                                                 multipleDataEntityItem = item }
+               let entity = DataEntity { dataEntityId = entityId,
+                                         dataEntityExperimentId = expId,
+                                         dataEntityRunIndex = i,
+                                         dataEntityVarId = varEntityId var,
+                                         dataEntitySourceId = srcId,
+                                         dataEntityItem = item }
                liftIO $
                  writeValueListEntity agent entity
                

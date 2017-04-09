@@ -10,7 +10,7 @@
 -- Tested with: GHC 8.0.2
 --
 -- The module defines 'LastValueListView' that provides with
--- the multiple simulation results in final time points accumulated for all runs.
+-- multiple simulation results in final time points.
 --
 
 module Simulation.Aivika.Experiment.Provider.LastValueListView 
@@ -27,8 +27,8 @@ import Simulation.Aivika.Experiment
 import Simulation.Aivika.Experiment.Entity
 import Simulation.Aivika.Experiment.Provider.Types
 
--- | Defines the 'View' that provides with the multiple simulation results
--- in final time points accumulated for all runs.
+-- | Defines the 'View' that provides with multiple simulation results
+-- in final time points.
 data LastValueListView =
   LastValueListView { lastValueListKey :: SourceKey,
                       -- ^ The source key.
@@ -84,6 +84,7 @@ simulateView view ctx expdata =
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
          loc        = experimentLocalisation exp
+     i <- liftParameter simulationIndex
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->
@@ -99,11 +100,12 @@ simulateView view ctx expdata =
                let item   = DataItem { dataItemValue = a,
                                        dataItemIteration = n,
                                        dataItemTime = t }
-                   entity = MultipleDataEntity { multipleDataEntityId = entityId,
-                                                 multipleDataEntityExperimentId = expId,
-                                                 multipleDataEntityVarId = varEntityId var,
-                                                 multipleDataEntitySourceId = srcId,
-                                                 multipleDataEntityItem = item }
+                   entity = DataEntity { dataEntityId = entityId,
+                                         dataEntityExperimentId = expId,
+                                         dataEntityRunIndex = i,
+                                         dataEntityVarId = varEntityId var,
+                                         dataEntitySourceId = srcId,
+                                         dataEntityItem = item }
                return entity
           liftIO $
             writeLastValueListEntities agent entities
