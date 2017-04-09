@@ -52,7 +52,7 @@ defaultFinalSamplingStatsView =
                            finalSamplingStatsTransform = id,
                            finalSamplingStatsSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (FinalSamplingStatsView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView FinalSamplingStatsView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

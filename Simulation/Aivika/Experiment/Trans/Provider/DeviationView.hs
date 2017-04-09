@@ -55,7 +55,7 @@ defaultDeviationView =
                   deviationTransform = id,
                   deviationSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (DeviationView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView DeviationView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

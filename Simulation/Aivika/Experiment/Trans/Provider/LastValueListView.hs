@@ -52,7 +52,7 @@ defaultLastValueListView =
                       lastValueListTransform = expandResults,
                       lastValueListSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (LastValueListView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView LastValueListView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

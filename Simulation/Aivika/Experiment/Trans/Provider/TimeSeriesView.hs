@@ -55,7 +55,7 @@ defaultTimeSeriesView =
                    timeSeriesTransform = expandResults,
                    timeSeries          = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (TimeSeriesView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView TimeSeriesView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

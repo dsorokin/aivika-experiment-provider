@@ -55,7 +55,7 @@ defaultSamplingStatsView =
                       samplingStatsTransform = id,
                       samplingStatsSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (SamplingStatsView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView SamplingStatsView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

@@ -55,7 +55,7 @@ defaultValueListView =
                   valueListTransform = expandResults,
                   valueListSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (ValueListView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView ValueListView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 

@@ -52,7 +52,7 @@ defaultFinalDeviationView =
                        finalDeviationTransform = id,
                        finalDeviationSeries    = id }
   
-instance ExperimentProviding ExperimentProvider m => ExperimentView (FinalDeviationView m) ExperimentProvider m where
+instance ExperimentProviding ExperimentProvider m => ExperimentView FinalDeviationView ExperimentProvider m where
 
   {-# INLINABLE outputView #-}
   outputView v = 
