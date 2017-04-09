@@ -16,6 +16,7 @@ module Simulation.Aivika.Experiment.Trans.Provider
         module Simulation.Aivika.Experiment.Trans.Provider.DeviationView,
         module Simulation.Aivika.Experiment.Trans.Provider.FinalDeviationView,
         module Simulation.Aivika.Experiment.Trans.Provider.FinalSamplingStatsView,
+        module Simulation.Aivika.Experiment.Trans.Provider.FinalTimingStatsView,
         module Simulation.Aivika.Experiment.Trans.Provider.MultipleLastValueListView,
         module Simulation.Aivika.Experiment.Trans.Provider.MultipleValueListView,
         module Simulation.Aivika.Experiment.Trans.Provider.LastValueListView,
@@ -29,6 +30,7 @@ import Simulation.Aivika.Experiment.Trans.Provider.Types
 import Simulation.Aivika.Experiment.Trans.Provider.DeviationView
 import Simulation.Aivika.Experiment.Trans.Provider.FinalDeviationView
 import Simulation.Aivika.Experiment.Trans.Provider.FinalSamplingStatsView
+import Simulation.Aivika.Experiment.Trans.Provider.FinalTimingStatsView
 import Simulation.Aivika.Experiment.Trans.Provider.MultipleLastValueListView
 import Simulation.Aivika.Experiment.Trans.Provider.MultipleValueListView
 import Simulation.Aivika.Experiment.Trans.Provider.LastValueListView
