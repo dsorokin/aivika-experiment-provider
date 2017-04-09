@@ -48,6 +48,7 @@ library
                      Simulation.Aivika.Experiment.Trans.Provider.TimeSeriesView
                      Simulation.Aivika.Experiment.Trans.Provider.TimingStatsView
                      Simulation.Aivika.Experiment.Trans.Provider.ValueListView
+                     Simulation.Aivika.Experiment.IO.Provider
 
     build-depends:   base >= 3 && < 6,
                      mtl >= 1.1.0.2,
