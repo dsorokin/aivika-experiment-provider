@@ -25,24 +25,28 @@ library
                      Simulation.Aivika.Experiment.Provider.DeviationView
                      Simulation.Aivika.Experiment.Provider.FinalDeviationView
                      Simulation.Aivika.Experiment.Provider.FinalSamplingStatsView
+                     Simulation.Aivika.Experiment.Provider.FinalTimingStatsView
                      Simulation.Aivika.Experiment.Provider.MultipleLastValueListView
                      Simulation.Aivika.Experiment.Provider.MultipleValueListView
                      Simulation.Aivika.Experiment.Provider.LastValueListView
                      Simulation.Aivika.Experiment.Provider.LastValueView
                      Simulation.Aivika.Experiment.Provider.SamplingStatsView
                      Simulation.Aivika.Experiment.Provider.TimeSeriesView
+                     Simulation.Aivika.Experiment.Provider.TimingStatsView
                      Simulation.Aivika.Experiment.Provider.ValueListView
                      Simulation.Aivika.Experiment.Trans.Provider
                      Simulation.Aivika.Experiment.Trans.Provider.Types
                      Simulation.Aivika.Experiment.Trans.Provider.DeviationView
                      Simulation.Aivika.Experiment.Trans.Provider.FinalDeviationView
                      Simulation.Aivika.Experiment.Trans.Provider.FinalSamplingStatsView
+                     Simulation.Aivika.Experiment.Trans.Provider.FinalTimingStatsView
                      Simulation.Aivika.Experiment.Trans.Provider.MultipleLastValueListView
                      Simulation.Aivika.Experiment.Trans.Provider.MultipleValueListView
                      Simulation.Aivika.Experiment.Trans.Provider.LastValueListView
                      Simulation.Aivika.Experiment.Trans.Provider.LastValueView
                      Simulation.Aivika.Experiment.Trans.Provider.SamplingStatsView
                      Simulation.Aivika.Experiment.Trans.Provider.TimeSeriesView
+                     Simulation.Aivika.Experiment.Trans.Provider.TimingStatsView
                      Simulation.Aivika.Experiment.Trans.Provider.ValueListView
 
     build-depends:   base >= 3 && < 6,
