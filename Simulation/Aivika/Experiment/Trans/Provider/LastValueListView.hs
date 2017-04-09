@@ -92,9 +92,9 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntityByKey agent expId srcKey title descr ns
-          let vars  = sourceVarEntities srcEntity
-              srcId = sourceId srcEntity
+          srcEntity <- liftIO $ readOrCreateSourceEntityByKey agent expId srcKey title descr ns LastValueListEntityType
+          let vars  = sourceEntityVarEntities srcEntity
+              srcId = sourceEntityId srcEntity
           entities <- forM (zip vars exts) $ \(var, ext) ->
             do t <- liftDynamics time
                n <- liftDynamics integIteration
@@ -103,11 +103,11 @@ simulateView view ctx expdata =
                let item   = DataItem { dataItemValue = a,
                                        dataItemIteration = n,
                                        dataItemTime = t }
-                   entity = MultipleDataEntity { multipleDataId = entityId,
-                                                 multipleDataExperimentId = expId,
-                                                 multipleDataVarId = varId var,
-                                                 multipleDataSourceId = srcId,
-                                                 multipleDataItem = item }
+                   entity = MultipleDataEntity { multipleDataEntityId = entityId,
+                                                 multipleDataEntityExperimentId = expId,
+                                                 multipleDataEntityVarId = varEntityId var,
+                                                 multipleDataEntitySourceId = srcId,
+                                                 multipleDataEntityItem = item }
                return entity
           liftIO $
             writeLastValueListEntities agent entities

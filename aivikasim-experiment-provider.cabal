@@ -21,6 +21,7 @@ library
 
     exposed-modules: Simulation.Aivika.Experiment.Provider
                      Simulation.Aivika.Experiment.Provider.Types
+                     Simulation.Aivika.Experiment.Provider.Utils
                      Simulation.Aivika.Experiment.Provider.DeviationView
                      Simulation.Aivika.Experiment.Provider.FinalDeviationView
                      Simulation.Aivika.Experiment.Provider.LastValueListView
@@ -39,6 +40,7 @@ library
     build-depends:   base >= 3 && < 6,
                      mtl >= 1.1.0.2,
                      array >= 0.3.0.0,
+                     time >= 1.5.0.1,
                      aivikasim >= 1.0,
                      aivikasim-transformers >= 1.0,
                      aivikasim-experiment >= 0.1,

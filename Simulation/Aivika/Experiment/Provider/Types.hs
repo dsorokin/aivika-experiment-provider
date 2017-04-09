@@ -18,13 +18,17 @@ module Simulation.Aivika.Experiment.Provider.Types
         makeExperimentProviderContext,
         contextExperimentEnvironment) where
 
+import Simulation.Aivika
 import Simulation.Aivika.Experiment
 import Simulation.Aivika.Experiment.Entity
+import Simulation.Aivika.Experiment.Provider.Utils
 
 -- | The experiment provider.
 data ExperimentProvider =
-  ExperimentProvider { providerExperimentAggregator :: ExperimentAggregator
+  ExperimentProvider { providerExperimentAggregator :: ExperimentAggregator,
                        -- ^ The experiment aggregator.
+                       providerExperimentId :: Maybe ExperimentUUID
+                       -- ^ The optional experiment identifier.
                      }
 
 -- | The experiment provider environment.
@@ -54,9 +58,49 @@ instance ExperimentRendering ExperimentProvider where
 
   liftExperiment r = id
 
-  prepareExperiment e provider = undefined
+  prepareExperiment e provider =
+    do let aggregator = providerExperimentAggregator provider
+           agent      = experimentAggregatorAgent aggregator
+       initialiseAgent agent
+       expEntity <-
+         retryAgentAction agent $
+         do expId <-
+              case providerExperimentId provider of
+                Nothing -> newRandomUUID
+                Just x  -> return x
+            expEntity <- readExperimentEntity agent expId
+            case expEntity of
+              Just expEntity -> return (Just expEntity)
+              Nothing ->
+                do localTime <- getCurrentLocalTime
+                   let integMethod = 
+                         case spcMethod (experimentSpecs e) of
+                           Euler       -> EulerIntegMethod
+                           RungeKutta2 -> RK2IntegMethod
+                           RungeKutta4 -> RK4IntegMethod
+                       expEntity =
+                         ExperimentEntity { experimentEntityId = expId,
+                                            experimentEntityTitle = experimentTitle e,
+                                            experimentEntityDescription = experimentDescription e,
+                                            experimentEntityStartTime = spcStartTime (experimentSpecs e),
+                                            experimentEntityStopTime = spcStopTime (experimentSpecs e),
+                                            experimentEntityDT = spcDT (experimentSpecs e),
+                                            experimentEntityIntegMethod = integMethod,
+                                            experimentEntityRunCount = experimentRunCount e,
+                                            experimentEntityRealStartTime = show localTime }
+                   f <- tryWriteExperimentEntity agent expEntity
+                   case f of
+                     True  -> return (Just expEntity)
+                     False -> return Nothing
+       let expId = experimentEntityId expEntity
+       return ExperimentProviderEnvironment { environmentExperimentProvider = provider,
+                                              environmentExperiment = e,
+                                              environmentExperimentId = expId }
 
-  renderExperiment e r reporters env = undefined
+  renderExperiment e provider reporters env =
+    do let aggregator = providerExperimentAggregator provider
+           agent      = experimentAggregatorAgent aggregator
+       finaliseAgent agent
 
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider

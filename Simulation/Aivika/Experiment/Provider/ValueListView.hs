@@ -103,9 +103,9 @@ simulateView view ctx expdata =
        DisposableEvent $
        do ns <- forM exts $ \ext ->
             return (resultValueName ext, loc $ resultValueId ext)
-          srcEntity <- liftIO $ readOrCreateSourceEntityByKey agent expId srcKey title descr ns
-          let vars  = sourceVarEntities srcEntity
-              srcId = sourceId srcEntity
+          srcEntity <- liftIO $ readOrCreateSourceEntityByKey agent expId srcKey title descr ns ValueListEntityType
+          let vars  = sourceEntityVarEntities srcEntity
+              srcId = sourceEntityId srcEntity
           forM_ (zip vars hs) $ \(var, h) ->
             do (ts, xs) <- readSignalHistory h
                item <- forM (zip (elems ts) (elems xs)) $ \(t, (n, a)) ->
@@ -113,11 +113,11 @@ simulateView view ctx expdata =
                                    dataItemIteration = n,
                                    dataItemTime = t }
                entityId <- liftIO newRandomUUID
-               let entity = MultipleDataEntity { multipleDataId = entityId,
-                                                 multipleDataExperimentId = expId,
-                                                 multipleDataVarId = varId var,
-                                                 multipleDataSourceId = srcId,
-                                                 multipleDataItem = item }
+               let entity = MultipleDataEntity { multipleDataEntityId = entityId,
+                                                 multipleDataEntityExperimentId = expId,
+                                                 multipleDataEntityVarId = varEntityId var,
+                                                 multipleDataEntitySourceId = srcId,
+                                                 multipleDataEntityItem = item }
                liftIO $
                  writeValueListEntity agent entity
                
