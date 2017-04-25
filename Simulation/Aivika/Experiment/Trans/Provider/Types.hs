@@ -63,7 +63,7 @@ instance (ExperimentMonadProviding ExperimentProvider m,
     liftIO $
     do let aggregator = providerExperimentAggregator provider
            agent      = experimentAggregatorAgent aggregator
-       initialiseAgent agent
+       initialiseEntitySchema agent
        expEntity <-
          retryAgentAction agent $
          do expId <-
@@ -99,11 +99,7 @@ instance (ExperimentMonadProviding ExperimentProvider m,
                                               environmentExperiment = e,
                                               environmentExperimentId = expId }
 
-  renderExperiment e provider reporters env =
-    liftIO $
-    do let aggregator = providerExperimentAggregator provider
-           agent      = experimentAggregatorAgent aggregator
-       finaliseAgent agent
+  renderExperiment e provider reporters env = return ()
 
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentMonadProviding ExperimentProvider m

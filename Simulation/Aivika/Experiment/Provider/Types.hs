@@ -61,7 +61,7 @@ instance ExperimentRendering ExperimentProvider where
   prepareExperiment e provider =
     do let aggregator = providerExperimentAggregator provider
            agent      = experimentAggregatorAgent aggregator
-       initialiseAgent agent
+       initialiseEntitySchema agent
        expEntity <-
          retryAgentAction agent $
          do expId <-
@@ -97,10 +97,7 @@ instance ExperimentRendering ExperimentProvider where
                                               environmentExperiment = e,
                                               environmentExperimentId = expId }
 
-  renderExperiment e provider reporters env =
-    do let aggregator = providerExperimentAggregator provider
-           agent      = experimentAggregatorAgent aggregator
-       finaliseAgent agent
+  renderExperiment e provider reporters env = return ()
 
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider
