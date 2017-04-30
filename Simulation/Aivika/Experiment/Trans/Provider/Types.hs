@@ -113,6 +113,7 @@ instance (ExperimentMonadProviding ExperimentProvider m,
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
          expEntity { experimentEntityCompleted = True }
+       return ()
 
   onExperimentFailed e provider env e' =
     liftIO $
@@ -121,6 +122,7 @@ instance (ExperimentMonadProviding ExperimentProvider m,
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
          expEntity { experimentEntityErrorMessage = Just (show e') }
+       return ()
 
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentMonadProviding ExperimentProvider m

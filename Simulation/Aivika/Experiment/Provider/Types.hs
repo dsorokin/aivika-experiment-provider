@@ -110,6 +110,7 @@ instance ExperimentRendering ExperimentProvider where
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
          expEntity { experimentEntityCompleted = True }
+       return ()
 
   onExperimentFailed e provider env e' =
     do let aggregator = providerExperimentAggregator provider
@@ -117,6 +118,7 @@ instance ExperimentRendering ExperimentProvider where
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
          expEntity { experimentEntityErrorMessage = Just (show e') }
+       return ()
        
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider
