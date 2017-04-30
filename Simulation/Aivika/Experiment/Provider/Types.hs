@@ -37,6 +37,8 @@ data ExperimentProviderEnvironment =
                                   -- ^ The experiment provider.
                                   environmentExperiment :: Experiment,
                                   -- ^ The experiment.
+                                  environmentExperimentEntity :: ExperimentEntity,
+                                  -- ^ The experiment entity.
                                   environmentExperimentId :: UUID
                                   -- ^ The experiment identifier.
                                 }
@@ -87,7 +89,9 @@ instance ExperimentRendering ExperimentProvider where
                                             experimentEntityDT = spcDT (experimentSpecs e),
                                             experimentEntityIntegMethod = integMethod,
                                             experimentEntityRunCount = experimentRunCount e,
-                                            experimentEntityRealStartTime = show localTime }
+                                            experimentEntityRealStartTime = show localTime,
+                                            experimentEntityCompleted = False,
+                                            experimentEntityErrorMessage = [] }
                    f <- tryWriteExperimentEntity agent expEntity
                    case f of
                      True  -> return (Just expEntity)
@@ -95,10 +99,25 @@ instance ExperimentRendering ExperimentProvider where
        let expId = experimentEntityId expEntity
        return ExperimentProviderEnvironment { environmentExperimentProvider = provider,
                                               environmentExperiment = e,
+                                              environmentExperimentEntity = expEntity,
                                               environmentExperimentId = expId }
 
   renderExperiment e provider reporters env = return ()
 
+  onExperimentCompleted e provider env =
+    do let aggregator = providerExperimentAggregator provider
+           agent      = experimentAggregatorAgent aggregator
+           expEntity  = environmentExperimentEntity env
+       updateExperimentEntity agent $
+         expEntity { experimentEntityCompleted = True }
+
+  onExperimentFailed e provider env e' =
+    do let aggregator = providerExperimentAggregator provider
+           agent      = experimentAggregatorAgent aggregator
+           expEntity  = environmentExperimentEntity env
+       updateExperimentEntity agent $
+         expEntity { experimentEntityErrorMessage = show e' }
+       
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider
 makeExperimentProviderContext = ExperimentProviderContext
