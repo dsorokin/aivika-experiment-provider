@@ -91,7 +91,7 @@ instance ExperimentRendering ExperimentProvider where
                                             experimentEntityRunCount = experimentRunCount e,
                                             experimentEntityRealStartTime = show localTime,
                                             experimentEntityCompleted = False,
-                                            experimentEntityErrorMessage = [] }
+                                            experimentEntityErrorMessage = Nothing }
                    f <- tryWriteExperimentEntity agent expEntity
                    case f of
                      True  -> return (Just expEntity)
@@ -116,7 +116,7 @@ instance ExperimentRendering ExperimentProvider where
            agent      = experimentAggregatorAgent aggregator
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
-         expEntity { experimentEntityErrorMessage = show e' }
+         expEntity { experimentEntityErrorMessage = Just (show e') }
        
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider
