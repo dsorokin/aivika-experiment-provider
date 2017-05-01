@@ -18,6 +18,11 @@ module Simulation.Aivika.Experiment.Provider.Types
         makeExperimentProviderContext,
         contextExperimentEnvironment) where
 
+import Control.Monad
+import Control.Monad.Trans
+
+import System.IO
+
 import Simulation.Aivika
 import Simulation.Aivika.Experiment
 import Simulation.Aivika.Experiment.Entity
@@ -118,7 +123,7 @@ instance ExperimentRendering ExperimentProvider where
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
          expEntity { experimentEntityErrorMessage = Just (show e') }
-       return ()
+       hPutStrLn stderr $ show e'
        
 -- | Make the experiment context.
 makeExperimentProviderContext :: ExperimentProviderEnvironment -> ExperimentContext ExperimentProvider
