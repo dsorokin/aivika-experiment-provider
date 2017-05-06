@@ -123,7 +123,8 @@ instance (ExperimentMonadProviding ExperimentProvider m,
            agent      = experimentAggregatorAgent aggregator
            expEntity  = environmentExperimentEntity env
        updateExperimentEntity agent $
-         expEntity { experimentEntityErrorMessage = Just (show e') }
+         expEntity { experimentEntityCompleted = False,
+                     experimentEntityErrorMessage = Just (show e') }
        hPutStrLn stderr $ show e'
 
 -- | Make the experiment context.
