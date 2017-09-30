@@ -36,8 +36,8 @@ data DeviationView m =
                   -- ^ The title.
                   deviationDescription :: String,
                   -- ^ The description.
-                  deviationPredicate :: Event m Bool,
-                  -- ^ It specifies the predicate that filters data.
+                  deviationGridSize :: Int,
+                  -- ^ The size of the grid, where the series data are collected.
                   deviationTransform :: ResultTransform m,
                   -- ^ The transform applied to the results before receiving series.
                   deviationSeries :: ResultTransform m
@@ -51,7 +51,7 @@ defaultDeviationView =
   DeviationView { deviationKey       = error "Provide with the deviationKey field value",
                   deviationTitle     = "Deviation",
                   deviationDescription = "",
-                  deviationPredicate = return True,
+                  deviationGridSize  = 1200,
                   deviationTransform = id,
                   deviationSeries    = id }
   
@@ -85,7 +85,6 @@ simulateView view ctx expdata =
          srcKey    = deviationKey view
          title     = deviationTitle view
          descr     = deviationDescription view
-         predicate = deviationPredicate view
          env        = contextExperimentEnvironment ctx
          provider   = environmentExperimentProvider env
          aggregator = providerExperimentAggregator provider
@@ -93,17 +92,16 @@ simulateView view ctx expdata =
          exp        = environmentExperiment env
          expId      = environmentExperimentId env
          loc        = experimentLocalisation exp
-         getData ext =
-           do n <- liftDynamics integIteration
-              a <- resultValueData ext
+         getData ext n =
+           do a <- resultValueData ext
               return (n, a)
      i  <- liftParameter simulationIndex
+     signal <- liftEvent $
+               newSignalInTimeGrid $
+               deviationGridSize view
      hs <- forM exts $ \ext ->
            newSignalHistory $
-           mapSignalM (const $ getData ext) $
-           filterSignalM (const predicate) $
-           pureResultSignal signals $
-           resultValueSignal ext
+           mapSignalM (getData ext) signal
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->
