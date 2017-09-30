@@ -103,7 +103,8 @@ simulateView view ctx expdata =
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->
-            return (resultValueName ext, loc $ resultValueId ext)
+            return (localisePathResultTitle loc $ resultValueIdPath ext,
+                    localisePathResultDescription loc $ resultValueIdPath ext)
           srcEntity <- liftIO $ readOrCreateSourceEntityByKey agent expId srcKey title descr ns MultipleValueListEntityType
           let vars  = sourceEntityVarEntities srcEntity
               srcId = sourceEntityId srcEntity

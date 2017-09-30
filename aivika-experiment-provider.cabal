@@ -1,5 +1,5 @@
 name:            aivika-experiment-provider
-version:         0.2
+version:         0.3
 synopsis:        Simulation experiment data provider for Aivika
 description:
     It provides with the results of simulation experiments [1].
@@ -54,9 +54,9 @@ library
                      mtl >= 1.1.0.2,
                      array >= 0.3.0.0,
                      time >= 1.5.0.1,
-                     aivika >= 5.1,
-                     aivika-transformers >= 5.1,
-                     aivika-experiment >= 5.0,
+                     aivika >= 5.3,
+                     aivika-transformers >= 5.3,
+                     aivika-experiment >= 5.1,
                      aivika-experiment-entity >= 0.4
 
     extensions:      MultiParamTypeClasses,
