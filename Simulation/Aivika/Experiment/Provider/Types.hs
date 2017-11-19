@@ -85,6 +85,7 @@ instance ExperimentRendering ExperimentProvider where
                            Euler       -> EulerIntegMethod
                            RungeKutta2 -> RK2IntegMethod
                            RungeKutta4 -> RK4IntegMethod
+                           RungeKutta4b -> RK4bIntegMethod
                        expEntity =
                          ExperimentEntity { experimentEntityId = expId,
                                             experimentEntityTitle = experimentTitle e,
