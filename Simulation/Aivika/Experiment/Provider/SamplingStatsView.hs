@@ -40,8 +40,10 @@ data SamplingStatsView =
                       -- ^ It specifies the predicate that filters data.
                       samplingStatsTransform :: ResultTransform,
                       -- ^ The transform applied to the results before receiving the series.
-                      samplingStatsSeries :: ResultTransform
+                      samplingStatsSeries :: ResultTransform,
                       -- ^ It defines the series to provide with.
+                      samplingStatsGridSize :: Maybe Int
+                      -- ^ The size of the grid, where the series data are saved.
                     }
   
 -- | The default 'SamplingStatsView'.  
@@ -52,7 +54,8 @@ defaultSamplingStatsView =
                       samplingStatsDescription = "",
                       samplingStatsPredicate = return True,
                       samplingStatsTransform = id,
-                      samplingStatsSeries    = id }
+                      samplingStatsSeries    = id,
+                      samplingStatsGridSize = Nothing }
   
 instance ExperimentView SamplingStatsView ExperimentProvider where
 
@@ -76,8 +79,6 @@ simulateView view ctx expdata =
                    experimentResults expdata
          exts    = resultsToDoubleStatsValues rs
          signals = experimentPredefinedSignals expdata
-         signal  = pureResultSignal signals $
-                   resultSignal rs
          srcKey    = samplingStatsKey view
          title     = samplingStatsTitle view
          descr     = samplingStatsDescription view
@@ -95,11 +96,19 @@ simulateView view ctx expdata =
               return (n, a)
      i  <- liftParameter simulationIndex
      hs <- forM exts $ \ext ->
-           newSignalHistory $
-           mapSignalM (const $ getData ext) $
-           filterSignalM (const predicate) $
-           pureResultSignal signals $
-           resultValueSignal ext
+           do signal <-
+                case samplingStatsGridSize view of
+                  Just m ->
+                    liftEvent $
+                    fmap (mapSignal $ const ()) $
+                    newSignalInTimeGrid m
+                  Nothing ->
+                    return $
+                    pureResultSignal signals $
+                    resultValueSignal ext
+              newSignalHistory $
+                mapSignalM (const $ getData ext) $
+                filterSignalM (const predicate) signal
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->

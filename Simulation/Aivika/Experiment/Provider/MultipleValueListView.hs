@@ -40,9 +40,11 @@ data MultipleValueListView =
                           -- ^ It specifies the predicate that filters data.
                           multipleValueListTransform :: ResultTransform,
                           -- ^ The transform applied to the results before receiving series.
-                          multipleValueListSeries :: ResultTransform
+                          multipleValueListSeries :: ResultTransform,
                           -- ^ It defines the series to provide with.
-                        }
+                          multipleValueListGridSize :: Maybe Int
+                          -- ^ The size of the grid, where the series data are saved.
+                      }
   
 -- | The default Multiple Value List view.  
 defaultMultipleValueListView :: MultipleValueListView
@@ -52,7 +54,8 @@ defaultMultipleValueListView =
                           multipleValueListDescription = "",
                           multipleValueListPredicate = return True,
                           multipleValueListTransform = expandResults,
-                          multipleValueListSeries    = id }
+                          multipleValueListSeries    = id,
+                          multipleValueListGridSize = Nothing }
   
 instance ExperimentView MultipleValueListView ExperimentProvider where
 
@@ -76,8 +79,6 @@ simulateView view ctx expdata =
                    experimentResults expdata
          exts    = resultsToDoubleListValues rs
          signals = experimentPredefinedSignals expdata
-         signal  = pureResultSignal signals $
-                   resultSignal rs
          srcKey    = multipleValueListKey view
          title     = multipleValueListTitle view
          descr     = multipleValueListDescription view
@@ -93,13 +94,21 @@ simulateView view ctx expdata =
            do n <- liftDynamics integIteration
               a <- resultValueData ext
               return (n, a)
-     i <- liftParameter simulationIndex
+     i  <- liftParameter simulationIndex
      hs <- forM exts $ \ext ->
-           newSignalHistory $
-           mapSignalM (const $ getData ext) $
-           filterSignalM (const predicate) $
-           pureResultSignal signals $
-           resultValueSignal ext
+           do signal <-
+                case multipleValueListGridSize view of
+                  Just m ->
+                    liftEvent $
+                    fmap (mapSignal $ const ()) $
+                    newSignalInTimeGrid m
+                  Nothing ->
+                    return $
+                    pureResultSignal signals $
+                    resultValueSignal ext
+              newSignalHistory $
+                mapSignalM (const $ getData ext) $
+                filterSignalM (const predicate) signal
      disposableComposite $
        DisposableEvent $
        do ns <- forM exts $ \ext ->
