@@ -54,7 +54,7 @@ defaultValueListView =
                   valueListPredicate = return True,
                   valueListTransform = expandResults,
                   valueListSeries    = id,
-                  valueListGridSize = Nothing }
+                  valueListGridSize  = Just 1200 }
   
 instance ExperimentView ValueListView ExperimentProvider where
 

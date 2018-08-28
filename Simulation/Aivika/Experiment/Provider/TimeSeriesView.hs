@@ -55,7 +55,7 @@ defaultTimeSeriesView =
                    timeSeriesPredicate = return True,
                    timeSeriesTransform = expandResults,
                    timeSeries          = id,
-                   timeSeriesGridSize  = Nothing }
+                   timeSeriesGridSize  = Just 1200 }
   
 instance ExperimentView TimeSeriesView ExperimentProvider where
   

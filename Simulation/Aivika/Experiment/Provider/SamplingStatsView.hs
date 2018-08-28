@@ -55,7 +55,7 @@ defaultSamplingStatsView =
                       samplingStatsPredicate = return True,
                       samplingStatsTransform = id,
                       samplingStatsSeries    = id,
-                      samplingStatsGridSize = Nothing }
+                      samplingStatsGridSize  = Just 1200 }
   
 instance ExperimentView SamplingStatsView ExperimentProvider where
 

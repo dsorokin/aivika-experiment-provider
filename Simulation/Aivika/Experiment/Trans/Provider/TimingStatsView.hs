@@ -56,7 +56,7 @@ defaultTimingStatsView =
                     timingStatsPredicate = return True,
                     timingStatsTransform = id,
                     timingStatsSeries    = id,
-                    timingStatsGridSize = Nothing }
+                    timingStatsGridSize  = Just 1200 }
   
 instance ExperimentProviding ExperimentProvider m => ExperimentView TimingStatsView ExperimentProvider m where
 

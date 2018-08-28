@@ -55,7 +55,7 @@ defaultMultipleValueListView =
                           multipleValueListPredicate = return True,
                           multipleValueListTransform = expandResults,
                           multipleValueListSeries    = id,
-                          multipleValueListGridSize = Nothing }
+                          multipleValueListGridSize  = Just 1200 }
   
 instance ExperimentView MultipleValueListView ExperimentProvider where
 
